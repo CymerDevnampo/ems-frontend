@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosClient from './../axios';
+import Swal from 'sweetalert2';
 
 export default function Register() {
     const [form, setForm] = useState({
@@ -17,12 +18,60 @@ export default function Register() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        const loadingSwal = Swal.fire({
+            text: 'Please wait...',
+            icon: 'info',
+            showConfirmButton: false,
+            allowOutsideClick: false,
+            position: 'top-end',
+            toast: true,
+            timer: 0,
+            timerProgressBar: true,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
         try {
             await axiosClient.post('/register', form);
-            alert('Registration successful. Please login.');
-            navigate('/login');
+
+            // const res = await axiosClient.post('/login', {
+            //     email: form.email,
+            //     password: form.password,
+            // });
+
+            loadingSwal.close();
+
+            // localStorage.setItem('token', res.data.token);
+            // localStorage.setItem('user', JSON.stringify(res.data.user));
+
+            Swal.fire({
+                icon: 'success',
+                text: 'Registration successful.',
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                toast: true,
+                timerProgressBar: true,
+            }).then(() => {
+                navigate('/dashboard');
+            });
+
         } catch (err) {
-            alert('Registration failed.');
+            loadingSwal.close();
+
+            const errorMessage = err.response?.data?.message || 'An error occurred. Please try again.';
+            Swal.fire({
+                icon: 'error',
+                text: errorMessage,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                toast: true,
+                timerProgressBar: true,
+            });
+
             console.error(err.response?.data);
         }
     };

@@ -228,12 +228,12 @@ export default function Register() {
                                     name="tin"
                                     type="text"
                                     className="form-control"
-                                    id="floatingTin"
-                                    placeholder="Tin"
+                                    id="floatingTIN"
+                                    placeholder="TIN"
                                     onChange={handleChange}
                                     required
                                 />
-                                <label htmlFor="floatingTin">Tin</label>
+                                <label htmlFor="floatingTin">TIN</label>
                             </div>
                         </div>
 
@@ -260,12 +260,12 @@ export default function Register() {
                                     name="hdmf"
                                     type="text"
                                     className="form-control"
-                                    id="floatingHdmf"
-                                    placeholder="Hdmf"
+                                    id="floatingHDMF"
+                                    placeholder="HDMF"
                                     onChange={handleChange}
                                     required
                                 />
-                                <label htmlFor="floatingHdmf">Hdmf</label>
+                                <label htmlFor="floatingHDMF">HDMF</label>
                             </div>
                         </div>
 

@@ -7,6 +7,7 @@ import Navbar from './components/Navbar';
 import GuestRoute from './components/GuestRoute';
 import Employees from './pages/employee/Employees';
 import CreateEmployee from './pages/employee/Create';
+import EditEmployee from './pages/employee/Edit';
 
 function App() {
   const [user, setUser] = useState(() => {
@@ -54,6 +55,11 @@ function App() {
           <Route
             path="/createEmployee"
             element={user ? <CreateEmployee user={user} /> : <Navigate to="/login" />}
+          />
+
+          <Route
+            path="/edit/employee/:id"
+            element={user ? <EditEmployee /> : <Navigate to="/login" />}
           />
 
         </Routes>
