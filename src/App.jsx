@@ -3,11 +3,16 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
-import Navbar from './components/Navbar'; // 🟢 Imported from components folder
+import Navbar from './components/Navbar';
 import GuestRoute from './components/GuestRoute';
+import Employees from './pages/employee/Employees';
+import CreateEmployee from './pages/employee/Create';
 
 function App() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem('user');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
 
   return (
 
@@ -15,6 +20,7 @@ function App() {
       <Navbar user={user} setUser={setUser} />
       <div className="container mt-4">
         <Routes>
+
           <Route
             path="/login"
             element={
@@ -23,6 +29,7 @@ function App() {
               </GuestRoute>
             }
           />
+
           <Route
             path="/register"
             element={
@@ -31,11 +38,24 @@ function App() {
               </GuestRoute>
             }
           />
+
           <Route
             path="/dashboard"
             element={user ? <Dashboard user={user} /> : <Navigate to="/login" />}
           />
+
           <Route path="/" element={<Navigate to="/login" />} />
+
+          <Route
+            path="/employees"
+            element={user ? <Employees user={user} /> : <Navigate to="/login" />}
+          />
+
+          <Route
+            path="/createEmployee"
+            element={user ? <CreateEmployee user={user} /> : <Navigate to="/login" />}
+          />
+
         </Routes>
       </div>
     </Router>

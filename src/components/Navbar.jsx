@@ -4,8 +4,9 @@ export default function Navbar({ user, setUser }) {
     const navigate = useNavigate();
 
     const handleLogout = () => {
-        // Clear token and user
+        // Clear token and saved user
         localStorage.removeItem('token');
+        localStorage.removeItem('user');
         setUser(null);
         navigate('/login');
     };
@@ -13,7 +14,7 @@ export default function Navbar({ user, setUser }) {
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
             <div className="container">
-                <Link className="navbar-brand" to="/">MyApp</Link>
+                <Link className="navbar-brand" to="/">Employee Management System</Link>
 
                 <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span className="navbar-toggler-icon"></span>
@@ -25,6 +26,9 @@ export default function Navbar({ user, setUser }) {
                             <>
                                 <li className="nav-item">
                                     <Link className="nav-link" to="/dashboard">Dashboard</Link>
+                                </li>
+                                <li className="nav-item">
+                                    <Link className="nav-link" to="/employees">Employees</Link>
                                 </li>
                                 <li className="nav-item">
                                     <span className="nav-link disabled">Welcome, {user?.name}</span>

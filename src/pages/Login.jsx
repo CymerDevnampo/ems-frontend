@@ -36,16 +36,18 @@ export default function Login({ setUser }) {
             Swal.fire({
                 icon: 'success',
                 // title: 'Login successful',
-                text: 'Redirecting to dashboard...',
+                text: 'Login successfully...',
                 position: 'top-end',
                 showConfirmButton: false,
                 timer: 3000,
                 toast: true,
-                timerProgressBar: true
+                timerProgressBar: true,
+            // }).then(() => navigate('/dashboard'));
             });
 
             // Store token and user data, then navigate
             localStorage.setItem('token', res.data.token);
+            localStorage.setItem('user', JSON.stringify(res.data.user)); // save user
             setUser(res.data.user);
             navigate('/dashboard');
         } catch (err) {
