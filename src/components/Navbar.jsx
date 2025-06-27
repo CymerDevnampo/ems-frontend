@@ -27,9 +27,11 @@ export default function Navbar({ user, setUser }) {
                                     <Link className="nav-link" to="/dashboard">Dashboard</Link>
                                 </li>
 
-                                <li className="nav-item">
-                                    <Link className="nav-link" to="/employees">Employees</Link>
-                                </li>
+                                {user.role !== 3 && (
+                                    <li className="nav-item">
+                                        <Link className="nav-link" to="/employees">Employees</Link>
+                                    </li>
+                                )}
 
                                 {/* Show this only if user.role === 1 */}
                                 {user.role === 1 && (
