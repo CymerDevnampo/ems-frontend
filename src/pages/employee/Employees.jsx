@@ -3,10 +3,12 @@ import { useEffect, useState } from 'react';
 import axiosClient from '../../axios';
 import Swal from 'sweetalert2';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faDownload, faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 export default function Employees() {
     const [employees, setEmployees] = useState([]);
+    const currentUser = JSON.parse(localStorage.getItem('user'));
+    const isAdmin = currentUser?.role_id === 1;
     const [pagination, setPagination] = useState({
         current_page: 1,
         last_page: 1,
@@ -67,7 +69,7 @@ export default function Employees() {
                             timer: 3000,
                             showConfirmButton: false
                         });
-                        fetchEmployees(); // refresh the list
+                        fetchEmployees(pagination.current_page); // Refresh the same page
                     })
                     .catch(() => {
                         Swal.fire({
@@ -83,16 +85,47 @@ export default function Employees() {
         });
     };
 
+    const handleDownloadEmployees = () => {
+        axiosClient.get('/download/employees', {
+            responseType: 'blob'
+        })
+            .then((res) => {
+                const url = window.URL.createObjectURL(new Blob([res.data]));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', 'employees.xlsx');
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+            })
+            .catch(() => {
+                Swal.fire({
+                    icon: 'error',
+                    text: 'Failed to download employee file',
+                    toast: true,
+                    position: 'top-end',
+                    timer: 3000,
+                    showConfirmButton: false,
+                });
+            });
+    };
+
     return (
         <div className="container mt-4">
             <h3 className="mb-4">All Employees</h3>
 
-            <div>
+            <div className='d-flex gap-1'>
                 <Link className="nav-link" to="/createEmployee">
                     <button className='btn btn-primary'>
-                        Add Employee
+                        <FontAwesomeIcon icon={faPlus} /> Add Employee
                     </button>
                 </Link>
+                
+                {isAdmin && (
+                    <button className='btn btn-success' onClick={() => handleDownloadEmployees()}>
+                        <FontAwesomeIcon icon={faDownload} /> Download Employees
+                    </button>
+                )}
             </div>
 
             {employees.length === 0 ? (
@@ -102,23 +135,27 @@ export default function Employees() {
                     <table className="table table-bordered table-hover">
                         <thead className="table-dark">
                             <tr>
+                                <th>Created by</th>
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Birthday</th>
                                 <th>Department</th>
                                 <th>Position</th>
+                                <th>Role</th>
                                 <th>Company</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             {employees.map((data) => (
-                                <tr key={data.id}>
-                                    <td>{data.user.name}</td>
-                                    <td>{data.user.email}</td>
+                                <tr key={data.encrypted_id}>
+                                    <td>{data.created_by?.name}</td>
+                                    <td>{data.user?.name}</td>
+                                    <td>{data.user?.email}</td>
                                     <td>{data.birthday}</td>
                                     <td>{data.employee_details[0]?.department}</td>
-                                    <td>{data.employee_details[0]?.position}</td>
+                                    <td>{data.employee_details[0]?.position?.name}</td>
+                                    <td>{data.user?.role.name}</td>
                                     <td>{data.employee_details[0]?.company}</td>
                                     <td className='d-flex'>
                                         <button
@@ -135,7 +172,6 @@ export default function Employees() {
                                             <FontAwesomeIcon icon={faTrash} />
                                         </button>
                                     </td>
-
                                 </tr>
                             ))}
                         </tbody>
@@ -154,8 +190,7 @@ export default function Employees() {
 
                             {[...Array(pagination.last_page)].map((_, index) => (
                                 <li
-                                    className={`page-item ${pagination.current_page === index + 1 ? 'active' : ''
-                                        }`}
+                                    className={`page-item ${pagination.current_page === index + 1 ? 'active' : ''}`}
                                     key={index}
                                 >
                                     <button
@@ -167,10 +202,7 @@ export default function Employees() {
                                 </li>
                             ))}
 
-                            <li
-                                className={`page-item ${pagination.current_page === pagination.last_page ? 'disabled' : ''
-                                    }`}
-                            >
+                            <li className={`page-item ${pagination.current_page === pagination.last_page ? 'disabled' : ''}`}>
                                 <button
                                     className="page-link"
                                     onClick={() => fetchEmployees(pagination.current_page + 1)}
@@ -180,7 +212,6 @@ export default function Employees() {
                             </li>
                         </ul>
                     </nav>
-
                 </div>
             )}
         </div>

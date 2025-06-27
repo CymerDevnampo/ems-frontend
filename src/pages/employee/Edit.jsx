@@ -8,6 +8,8 @@ export default function EditEmployee() {
     const navigate = useNavigate();
     const [positions, setPositions] = useState([]);
     const [roles, setRoles] = useState([]);
+    const currentUser = JSON.parse(localStorage.getItem('user'));
+    const isAdmin = currentUser?.role_id === 1;
 
     const [form, setForm] = useState({
         name: '',
@@ -35,7 +37,7 @@ export default function EditEmployee() {
                 age: data.age,
                 department: data.employee_details[0]?.department,
                 position: data.employee_details[0]?.position,
-                role: data.user.role?.id || '',
+                role_id: data.user.role?.id || '',
                 company: data.employee_details[0]?.company,
                 sss: data.employee_details[0]?.sss,
                 tin: data.employee_details[0]?.tin,
@@ -70,16 +72,51 @@ export default function EditEmployee() {
     const handleChange = (e) =>
         setForm({ ...form, [e.target.name]: e.target.value });
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        axiosClient.put(`/update/employee/${id}`, form)
-            .then(() => {
-                Swal.fire('Employee updated successfully', '', 'success');
-                navigate('/employees');
-            })
-            .catch(() => {
-                Swal.fire('Failed to update employee', '', 'error');
+
+        const loadingSwal = Swal.fire({
+            text: 'Please wait...',
+            icon: 'info',
+            showConfirmButton: false,
+            allowOutsideClick: false,
+            position: 'top-end',
+            toast: true,
+            timer: 0,
+            timerProgressBar: true,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        try {
+            await axiosClient.put(`/update/employee/${id}`, form);
+            Swal.fire({
+                icon: 'success',
+                text: 'Employee updated Successfully...',
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                toast: true,
+                timerProgressBar: true
             });
+            navigate('/employees');
+        } catch (err) {
+            loadingSwal.close();
+
+            const errorMessage = err.response?.data?.message || 'Theres an error while updating the employee.';
+
+            Swal.fire({
+                icon: 'error',
+                text: errorMessage,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                toast: true,
+                timerProgressBar: true,
+            });
+        }
+
     };
 
     return (
@@ -208,30 +245,32 @@ export default function EditEmployee() {
                         </div>
                     </div>
 
-                    <div className="col-md-6">
-                        <div className="form-floating">
-                            <select
-                                name="role"
-                                className="form-select"
-                                id="floatingRole"
-                                value={form.role}
-                                onChange={handleChange}
-                                required
-                            >
-                                <option value="" disabled>
-                                    {roles.length === 0 ? 'No roles available' : 'Select Role'}
-                                </option>
-
-                                {roles.map((role) => (
-                                    <option key={role.id} value={role.id}>
-                                        {role.name}
+                    {isAdmin && (
+                        <div className="col-md-6">
+                            <div className="form-floating">
+                                <select
+                                    name="role_id"
+                                    className="form-select"
+                                    id="floatingRole"
+                                    value={form.role_id}
+                                    onChange={handleChange}
+                                    required
+                                >
+                                    <option value="" disabled>
+                                        {roles.length === 0 ? 'No roles available' : 'Select Role'}
                                     </option>
-                                ))}
-                            </select>
-                            <label htmlFor="floatingRole">Role</label>
-                        </div>
-                    </div>
 
+                                    {roles.map((role) => (
+                                        <option key={role.id} value={role.id}>
+                                            {role.name}
+                                        </option>
+                                    ))}
+                                </select>
+                                <label htmlFor="floatingRole">Role</label>
+                            </div>
+                        </div>
+                    )}
+                    
                     <div className="col-md-6">
                         <div className="form-floating">
                             <input

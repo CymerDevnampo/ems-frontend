@@ -7,7 +7,7 @@ export default function Register() {
     const [positions, setPositions] = useState([]);
     const [roles, setRoles] = useState([]);
     const currentUser = JSON.parse(localStorage.getItem('user'));
-    const isAdmin = currentUser?.role === 1;
+    const isAdmin = currentUser?.role_id === 1;
 
 
     useEffect(() => {
@@ -39,7 +39,7 @@ export default function Register() {
         age: '',
         department: '',
         position: '',
-        role: '',
+        role_id: '',
         company: '',
         sss: '',
         tin: '',
@@ -231,12 +231,12 @@ export default function Register() {
                             <div className="col-md-6">
                                 <div className="form-floating">
                                     <select
-                                        name="role"
+                                        name="role_id"
                                         className="form-select"
                                         id="floatingRole"
                                         onChange={handleChange}
                                         required
-                                        value={form.role}
+                                        value={form.role_id}
                                     >
                                         <option value="" disabled>
                                             {roles.length === 0 ? 'No roles available' : 'Select Role'}
