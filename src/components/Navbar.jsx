@@ -4,7 +4,6 @@ export default function Navbar({ user, setUser }) {
     const navigate = useNavigate();
 
     const handleLogout = () => {
-        // Clear token and saved user
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         setUser(null);
@@ -27,16 +26,36 @@ export default function Navbar({ user, setUser }) {
                                 <li className="nav-item">
                                     <Link className="nav-link" to="/dashboard">Dashboard</Link>
                                 </li>
+
                                 <li className="nav-item">
                                     <Link className="nav-link" to="/employees">Employees</Link>
                                 </li>
-                                <li className="nav-item">
-                                    <span className="nav-link disabled">Welcome, {user?.name}</span>
-                                </li>
-                                <li className="nav-item">
-                                    <button className="btn btn-sm btn-outline-light ms-2" onClick={handleLogout}>
-                                        Logout
-                                    </button>
+
+                                {/* Show this only if user.role === 1 */}
+                                {user.role === 1 && (
+                                    <li className="nav-item">
+                                        <Link className="nav-link" to="/positions">Position</Link>
+                                    </li>
+                                )}
+
+                                <li className="nav-item dropdown">
+                                    <a
+                                        className="nav-link dropdown-toggle"
+                                        href="#"
+                                        id="userDropdown"
+                                        role="button"
+                                        data-bs-toggle="dropdown"
+                                        aria-expanded="false"
+                                    >
+                                        {user?.name}
+                                    </a>
+                                    <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                        <li>
+                                            <button className="dropdown-item" onClick={handleLogout}>
+                                                Logout
+                                            </button>
+                                        </li>
+                                    </ul>
                                 </li>
                             </>
                         ) : (

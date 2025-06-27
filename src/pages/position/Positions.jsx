@@ -5,8 +5,8 @@ import Swal from 'sweetalert2';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
 
-export default function Employees() {
-    const [employees, setEmployees] = useState([]);
+export default function Positions() {
+    const [positions, setPositions] = useState([]);
     const [pagination, setPagination] = useState({
         current_page: 1,
         last_page: 1,
@@ -14,11 +14,11 @@ export default function Employees() {
 
     const navigate = useNavigate();
 
-    const fetchEmployees = (page = 1) => {
+    const fetchPositions = (page = 1) => {
         axiosClient
-            .get(`/get/employee?page=${page}`)
+            .get(`/get/position?page=${page}`)
             .then((res) => {
-                setEmployees(res.data.data);
+                setPositions(res.data.data);
                 setPagination({
                     current_page: res.data.current_page,
                     last_page: res.data.last_page,
@@ -27,7 +27,7 @@ export default function Employees() {
             .catch((err) => {
                 Swal.fire({
                     icon: 'error',
-                    text: 'Failed to fetch employees',
+                    text: 'Failed to fetch position',
                     toast: true,
                     position: 'top-end',
                     showConfirmButton: false,
@@ -39,7 +39,7 @@ export default function Employees() {
     };
 
     useEffect(() => {
-        fetchEmployees();
+        fetchPositions();
     }, []);
 
     const handleDelete = (encryptedId) => {
@@ -56,23 +56,23 @@ export default function Employees() {
             showConfirmButton: true,
         }).then((result) => {
             if (result.isConfirmed) {
-                axiosClient.delete(`/delete/employee/${encryptedId}`)
+                axiosClient.delete(`/delete/position/${encryptedId}`)
                     .then(() => {
                         Swal.fire({
                             icon: 'success',
                             title: 'Deleted!',
-                            text: 'Employee has been deleted.',
+                            text: 'Position has been deleted.',
                             toast: true,
                             position: 'top-end',
                             timer: 3000,
                             showConfirmButton: false
                         });
-                        fetchEmployees(); // refresh the list
+                        fetchPositions();
                     })
                     .catch(() => {
                         Swal.fire({
                             icon: 'error',
-                            text: 'Failed to delete employee.',
+                            text: 'Failed to delete position.',
                             toast: true,
                             position: 'top-end',
                             timer: 3000,
@@ -85,53 +85,41 @@ export default function Employees() {
 
     return (
         <div className="container mt-4">
-            <h3 className="mb-4">All Employees</h3>
+            <h3 className="mb-4">All Position</h3>
 
             <div>
-                <Link className="nav-link" to="/createEmployee">
+                <Link className="nav-link" to="/createPosition">
                     <button className='btn btn-primary'>
-                        Add Employee
+                        Add Positions
                     </button>
                 </Link>
             </div>
 
-            {employees.length === 0 ? (
-                <p>No employees found.</p>
+            {positions.length === 0 ? (
+                <p>No positions found.</p>
             ) : (
                 <div className="table-responsive mt-4">
                     <table className="table table-bordered table-hover">
                         <thead className="table-dark">
                             <tr>
                                 <th>Name</th>
-                                <th>Email</th>
-                                <th>Birthday</th>
-                                <th>Department</th>
-                                <th>Position</th>
-                                <th>Company</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {employees.map((data) => (
+                            {positions.map((data) => (
                                 <tr key={data.id}>
-                                    <td>{data.user.name}</td>
-                                    <td>{data.user.email}</td>
-                                    <td>{data.birthday}</td>
-                                    <td>{data.employee_details[0]?.department}</td>
-                                    <td>{data.employee_details[0]?.position}</td>
-                                    <td>{data.employee_details[0]?.company}</td>
+                                    <td>{data.name}</td>
                                     <td className='d-flex'>
                                         <button
                                             className="btn btn-sm btn-warning me-2"
-                                            onClick={() => navigate(`/edit/employee/${data.encrypted_id}`)}
+                                            onClick={() => navigate(`/edit/position/${data.encrypted_id}`)}
                                         >
                                             <FontAwesomeIcon icon={faPen} />
                                         </button>
 
-                                        <button
-                                            className="btn btn-sm btn-danger"
-                                            onClick={() => handleDelete(data.encrypted_id)}
-                                        >
+                                        <button className="btn btn-sm btn-danger"
+                                            onClick={() => handleDelete(data.encrypted_id)}>
                                             <FontAwesomeIcon icon={faTrash} />
                                         </button>
                                     </td>
@@ -146,7 +134,7 @@ export default function Employees() {
                             <li className={`page-item ${pagination.current_page === 1 ? 'disabled' : ''}`}>
                                 <button
                                     className="page-link"
-                                    onClick={() => fetchEmployees(pagination.current_page - 1)}
+                                    onClick={() => fetchPositions(pagination.current_page - 1)}
                                 >
                                     Previous
                                 </button>
@@ -160,7 +148,7 @@ export default function Employees() {
                                 >
                                     <button
                                         className="page-link"
-                                        onClick={() => fetchEmployees(index + 1)}
+                                        onClick={() => fetchPositions(index + 1)}
                                     >
                                         {index + 1}
                                     </button>
@@ -173,7 +161,7 @@ export default function Employees() {
                             >
                                 <button
                                     className="page-link"
-                                    onClick={() => fetchEmployees(pagination.current_page + 1)}
+                                    onClick={() => fetchPositions(pagination.current_page + 1)}
                                 >
                                     Next
                                 </button>

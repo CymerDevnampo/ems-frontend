@@ -8,6 +8,10 @@ import GuestRoute from './components/GuestRoute';
 import Employees from './pages/employee/Employees';
 import CreateEmployee from './pages/employee/Create';
 import EditEmployee from './pages/employee/Edit';
+import Positions from './pages/position/Positions';
+import CreatePosition from './pages/position/Create';
+import EditPosition from './pages/position/Edit';
+
 
 function App() {
   const [user, setUser] = useState(() => {
@@ -47,6 +51,7 @@ function App() {
 
           <Route path="/" element={<Navigate to="/login" />} />
 
+          {/* EMPLOYEES */}
           <Route
             path="/employees"
             element={user ? <Employees user={user} /> : <Navigate to="/login" />}
@@ -60,6 +65,26 @@ function App() {
           <Route
             path="/edit/employee/:id"
             element={user ? <EditEmployee /> : <Navigate to="/login" />}
+          />
+
+
+
+
+
+          {/* POSITION */}
+          <Route
+            path="/positions"
+            element={user ? <Positions user={user} /> : <Navigate to="/login" />}
+          />
+
+          <Route
+            path="/createPosition"
+            element={user ? <CreatePosition user={user} /> : <Navigate to="/login" />}
+          />
+
+          <Route
+            path="/edit/position/:id"
+            element={user ? <EditPosition /> : <Navigate to="/login" />}
           />
 
         </Routes>

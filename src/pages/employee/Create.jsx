@@ -1,9 +1,36 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axiosClient from '../../axios';
 import Swal from 'sweetalert2';
 
 export default function Register() {
+    const [positions, setPositions] = useState([]);
+    const [roles, setRoles] = useState([]);
+    const currentUser = JSON.parse(localStorage.getItem('user'));
+    const isAdmin = currentUser?.role === 1;
+
+
+    useEffect(() => {
+        axiosClient.get('/get/position')
+            .then((res) => {
+                setPositions(res.data.data);
+                // const cydata = res.data.data;
+                // console.log(cydata);
+            })
+            .catch((err) => {
+                console.error('Failed to load positions:', err);
+            });
+
+        axiosClient.get('/get/roles')
+            .then((res) => {
+                setRoles(res.data);
+                // console.log(res.data.data);
+            })
+            .catch((err) => {
+                console.error('Failed to load roles:', err);
+            });
+    }, []);
+
     const [form, setForm] = useState({
         name: '',
         email: '',
@@ -12,6 +39,7 @@ export default function Register() {
         age: '',
         department: '',
         position: '',
+        role: '',
         company: '',
         sss: '',
         tin: '',
@@ -176,18 +204,55 @@ export default function Register() {
                         {/* Position */}
                         <div className="col-md-6">
                             <div className="form-floating">
-                                <input
+                                <select
                                     name="position"
-                                    type="text"
-                                    className="form-control"
+                                    className="form-select"
                                     id="floatingPosition"
-                                    placeholder="Position"
                                     onChange={handleChange}
                                     required
-                                />
+                                    defaultValue=""
+                                >
+                                    <option value="" disabled>
+                                        {positions.length === 0 ? 'No positions available — please add one' : 'Select Position'}
+                                    </option>
+
+                                    {positions.map((pos) => (
+                                        <option key={pos.encrypted_id} value={pos.encrypted_id}>
+                                            {pos.name}
+                                        </option>
+                                    ))}
+                                </select>
                                 <label htmlFor="floatingPosition">Position</label>
                             </div>
                         </div>
+
+                        {/* Role */}
+                        {isAdmin && (
+                            <div className="col-md-6">
+                                <div className="form-floating">
+                                    <select
+                                        name="role"
+                                        className="form-select"
+                                        id="floatingRole"
+                                        onChange={handleChange}
+                                        required
+                                        value={form.role}
+                                    >
+                                        <option value="" disabled>
+                                            {roles.length === 0 ? 'No roles available' : 'Select Role'}
+                                        </option>
+
+                                        {roles.map((role) => (
+                                            <option key={role.id} value={role.id}>
+                                                {role.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <label htmlFor="floatingRole">Role</label>
+                                </div>
+                            </div>
+                        )}
+
 
                         {/* Company */}
                         <div className="col-md-6">

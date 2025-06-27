@@ -6,6 +6,9 @@ import Swal from 'sweetalert2';
 export default function EditEmployee() {
     const { id } = useParams(); // encrypted ID
     const navigate = useNavigate();
+    const [positions, setPositions] = useState([]);
+    const [roles, setRoles] = useState([]);
+
     const [form, setForm] = useState({
         name: '',
         email: '',
@@ -32,6 +35,7 @@ export default function EditEmployee() {
                 age: data.age,
                 department: data.employee_details[0]?.department,
                 position: data.employee_details[0]?.position,
+                role: data.user.role?.id || '',
                 company: data.employee_details[0]?.company,
                 sss: data.employee_details[0]?.sss,
                 tin: data.employee_details[0]?.tin,
@@ -42,7 +46,26 @@ export default function EditEmployee() {
             Swal.fire('Failed to load employee', '', 'error');
             navigate('/employees');
         });
+
+
+        axiosClient.get('/get/position')
+            .then((res) => {
+                setPositions(res.data.data);
+            })
+            .catch((err) => {
+                console.error('Failed to load positions:', err);
+            });
+
+
+        axiosClient.get('/get/roles')
+            .then((res) => {
+                setRoles(res.data);
+            })
+            .catch((err) => {
+                console.error('Failed to load roles:', err);
+            });
     }, [id]);
+
 
     const handleChange = (e) =>
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -163,17 +186,49 @@ export default function EditEmployee() {
 
                     <div className="col-md-6">
                         <div className="form-floating">
-                            <input
+                            <select
                                 name="position"
-                                type="text"
-                                className="form-control"
+                                className="form-select"
                                 id="floatingPosition"
-                                placeholder="Position"
                                 value={form.position}
                                 onChange={handleChange}
                                 required
-                            />
+                            >
+                                <option value="" disabled>
+                                    {positions.length === 0 ? 'No positions available — please add one' : 'Select Position'}
+                                </option>
+
+                                {positions.map((pos) => (
+                                    <option key={pos.id} value={pos.id}>
+                                        {pos.name}
+                                    </option>
+                                ))}
+                            </select>
                             <label htmlFor="floatingPosition">Position</label>
+                        </div>
+                    </div>
+
+                    <div className="col-md-6">
+                        <div className="form-floating">
+                            <select
+                                name="role"
+                                className="form-select"
+                                id="floatingRole"
+                                value={form.role}
+                                onChange={handleChange}
+                                required
+                            >
+                                <option value="" disabled>
+                                    {roles.length === 0 ? 'No roles available' : 'Select Role'}
+                                </option>
+
+                                {roles.map((role) => (
+                                    <option key={role.id} value={role.id}>
+                                        {role.name}
+                                    </option>
+                                ))}
+                            </select>
+                            <label htmlFor="floatingRole">Role</label>
                         </div>
                     </div>
 
@@ -261,9 +316,11 @@ export default function EditEmployee() {
                 </div>
                 <div className="mt-3 d-flex gap-1">
                     <button className="btn btn-success">Update</button>
-                    <button className="btn btn-secondary" type="button">
-                        <Link className="nav-link" to="/employees">Back</Link>
-                    </button>
+                    <Link className="nav-link" to="/employees">
+                        <button className="btn btn-secondary" type="button">
+                            Back
+                        </button>
+                    </Link>
                 </div>
             </form>
         </div>
