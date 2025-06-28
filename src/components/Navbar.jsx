@@ -3,6 +3,10 @@ import { Link, useNavigate } from 'react-router-dom';
 export default function Navbar({ user, setUser }) {
     const navigate = useNavigate();
 
+    const handleProfile = () => {
+        navigate('/profile');
+    };
+
     const handleLogout = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
@@ -53,6 +57,7 @@ export default function Navbar({ user, setUser }) {
                                     </a>
                                     <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                                         <li>
+                                            <button className='dropdown-item' onClick={handleProfile}>Profile</button>
                                             <button className="dropdown-item" onClick={handleLogout}>
                                                 Logout
                                             </button>

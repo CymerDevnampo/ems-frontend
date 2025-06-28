@@ -11,6 +11,7 @@ import EditEmployee from './pages/employee/Edit';
 import Positions from './pages/position/Positions';
 import CreatePosition from './pages/position/Create';
 import EditPosition from './pages/position/Edit';
+import Profile from './pages/profile/Profile';
 
 
 function App() {
@@ -85,6 +86,14 @@ function App() {
           <Route
             path="/edit/position/:id"
             element={user ? <EditPosition /> : <Navigate to="/login" />}
+          />
+
+
+
+          {/* PROFILE */}
+          <Route
+            path="/profile"
+            element={user ? <Profile user={user} /> : <Navigate to="/login" />}
           />
 
         </Routes>
