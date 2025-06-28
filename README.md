@@ -12,6 +12,12 @@
 
 - npm run dev
 
+# Account
+
+## Pricipal Admin
+- username: principal@cymer.com
+- password: principal@cymer.com
+
 ## Notes
 
 - dont modify the axios.js baseURL cause I setit up already for a basic serve on the backend, but feel free to comfigure if you want custom host
